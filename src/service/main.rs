@@ -9,6 +9,22 @@ use {
 
 const BUFFER_SIZE: usize = 8;
 
+fn ipc_init(socket_name: &str) -> Result<LocalSocketListener, std::io::Error> {
+    let n = socket_name.to_ns_name::<GenericNamespaced>()?;
+    let listener = match ListenerOptions::new().name(n).create_sync() {
+        Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
+            eprintln!(
+                "Error: could not start server because the socket file is \
+                occupied. Please check if {SOCKET_NAME} is in use by another \
+                process and try again."
+            );
+            return Err(e);
+        }
+        x => x?,
+    };
+    Ok(listener)
+}
+
 // TODO: clean up this code, make it more "rusty"
 fn ipc_receive(conn: &mut BufReader<Stream>) -> Result<Command, Error> {
     let mut data = Vec::<u8>::new();
@@ -31,22 +47,8 @@ fn ipc_receive(conn: &mut BufReader<Stream>) -> Result<Command, Error> {
 }
 
 fn main() -> std::io::Result<()> {
-    let name = SOCKET_NAME.to_ns_name::<GenericNamespaced>()?;
-
-    let listener = match ListenerOptions::new().name(name).create_sync() {
-        Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
-            eprintln!(
-                "Error: could not start server because the socket file is \
-                occupied. Please check if {SOCKET_NAME} is in use by another \
-                process and try again."
-            );
-            return Err(e);
-        }
-        x => x?,
-    };
-
+    let listener = ipc_init(SOCKET_NAME)?;
     eprintln!("Server running at {SOCKET_NAME}");
-
     for mut conn in listener
         .incoming()
         .filter_map(|conn| {
