@@ -36,6 +36,7 @@ yea thats about it actually.
 - [x] Send IPC commands to server.
 - [ ] Remove ambiguity around the type of socket we're using, enfore the UNIX specific one.
 - [ ] Support output status
+- [ ] Handle the interpretation of the output from the psu (the emoji for example) on the `cli` side.
 - [ ] Wrap default commands?
 - [ ] Keep listening for new connection when PSU power cycles.
 

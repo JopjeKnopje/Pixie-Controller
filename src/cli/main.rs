@@ -11,6 +11,11 @@ use {
 
 fn main() -> std::io::Result<()> {
     human_panic::setup_panic!();
+    let args: Vec<String> = env::args().collect();
+
+    // yikes
+    let cmd = CustomCommand::from(args[1].as_str());
+
     let name = SOCKET_NAME.to_ns_name::<GenericNamespaced>()?;
 
     // Will fail immediately if the server hasn't started yet.
@@ -20,12 +25,9 @@ fn main() -> std::io::Result<()> {
     // 2. serialize and send enum through socket.
     // 3. print reply which will be a `ka3005p::Status` and parse that out
 
-    let cmd = CustomCommand::PowerToggle;
     let data = serde_cbor::to_vec(&cmd).unwrap();
 
-    dbg!("writing data {:?}", &data);
     conn.get_mut().write_all(&data)?;
-    dbg!("done writing data");
 
     // BufReader doesn't pass Write through, so we use get_mut.
     // conn.get_mut().write_all(b"Hello from client!\n")?;
@@ -41,7 +43,9 @@ fn main() -> std::io::Result<()> {
     drop(conn);
 
     // read_line keeps the line feed at the end.
-    print!("Server answered: {buffer}");
+    if !buffer.is_empty() {
+        print!("{}", buffer);
+    }
     //{
     Ok(())
 }

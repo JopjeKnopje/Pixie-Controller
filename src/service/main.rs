@@ -80,10 +80,18 @@ fn main() -> Result<()> {
         let cmd = ipc_receive(&mut conn).unwrap();
         println!("received command {:?}", cmd);
 
-        let func = cmd.enum_to_func();
-        func(&mut psu)?;
+        match (cmd.enum_to_func())(&mut psu) {
+            Ok(res) => {
+                match res {
+                    Some(val) => conn.get_mut().write_all(val.as_bytes())?,
+                    // TODO: Pass
+                    None => _ = 1,
+                }
+            }
+            Err(e) => eprintln!("error while executing command {}", e),
+        }
 
-        conn.get_mut().write_all(b"Hello from server!\n")?;
+        // conn.get_mut().write_all(b"Hello from server!\n")?;
 
         // Avoid holding up resources.
         drop(conn);
