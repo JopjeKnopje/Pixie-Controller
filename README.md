@@ -29,6 +29,10 @@ A standalone background service to send commands to using a cli. it will also ke
 
 yea thats about it actually.
 
+## Toolchain
+
+- prek, just, cargo (duhh), text-editor, keyboard, monitor (I use a 12 inch 4:3, but you could go smaller), [lungs](https://en.wikipedia.org/wiki/Lung) (gotta keep breathing)
+
 ## TODO
 
 - [x] Build system for multiple bins
@@ -38,7 +42,12 @@ yea thats about it actually.
 - [ ] Support output status
 - [ ] Handle the interpretation of the output from the psu (the emoji for example) on the `cli` side.
 - [ ] Wrap default commands?
+- [ ] `psu-cli` error when `psu-service` is not online.
 - [ ] Keep listening for new connection when PSU power cycles.
+- [ ] Improve logging especially in the `psu-service`.
+- [ ] in `psu-cli` print to stdout.
+- [ ] Improve code A LOT and release to AUR.
+- [ ] Config file?
 
 ### psu-cli
 
