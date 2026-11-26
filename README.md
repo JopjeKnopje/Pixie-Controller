@@ -1,14 +1,13 @@
 # psu-toggle
+
 Small script based on the [ka3005p](https://github.com/Nicoretti/ka3005p) crate, to toggle a compatible PSU.
 I mainly made this so I can have a widget in my [i3status-rs](https://github.com/greshake/i3status-rust) bar.
 
-
-
 ## State
+
 Atm its very hacky and takes a second to refresh.
 There is also a bug where sometimes the serial port is busy, this may occur after you've just changed state.
 I still need to properly read the docx to make the icon update on every click instantly.
-
 
 ## i3status-rs config snippet
 
@@ -22,21 +21,23 @@ button = "left"
 cmd = "~/.local/bin/psu-toggle toggle"
 ```
 
-
 ## Upgrades
+
 Because this version is absolte ass here are some improvements.
 
 A standalone background service to send commands to using a cli. it will also keep the serial connection alive, which should make it respond wayyyy faster than it is now.
 
-
 yea thats about it actually.
 
 ## TODO
+
 - [ ] Build system multiple bins, `psu-service`, `psu-cli`
 - [ ] Figure out IPC
 
 ### psu-cli
+
 This will take in the exact same commands as the [ka3005p](https://docs.rs/ka3005p/latest/ka3005p/) crate. But instead of calling the serial port we wrap that and call the `psu-service` through IPC.
 
 ### psu-service
+
 A daemon which listens for IPC, and runs the actual command through the serial port. Then passes the result back through IPC.

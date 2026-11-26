@@ -1,7 +1,6 @@
 use std::io::{BufRead, Write};
 
 use psu_toggle::{Command, PowerState::Toggle, SOCKET_NAME};
-use serde::Serialize;
 use {
     interprocess::local_socket::{GenericNamespaced, Stream, prelude::*},
     std::io::BufReader,
@@ -18,7 +17,7 @@ fn main() -> std::io::Result<()> {
     // 3. print reply which will be a `ka3005p::Status` and parse that out
 
     let cmd = Command::Power(Toggle);
-    let mut data = serde_cbor::to_vec(&cmd).unwrap();
+    let data = serde_cbor::to_vec(&cmd).unwrap();
 
     dbg!("writing data {:?}", &data);
     conn.get_mut().write_all(&data)?;
