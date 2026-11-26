@@ -10,10 +10,11 @@ pub enum PowerState {
     Toggle,
 }
 
+// data we SEND to the power supply
 #[derive(Serialize, Deserialize, Debug)]
 pub enum Command {
     Power(PowerState),
-    Status,
 }
+
 
 
