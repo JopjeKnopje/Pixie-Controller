@@ -2,7 +2,6 @@ use serde::{Deserialize, Serialize};
 
 pub const SOCKET_NAME: &str = "example.sock";
 
-
 #[derive(Serialize, Deserialize, Debug)]
 pub enum PowerState {
     On,
@@ -15,6 +14,3 @@ pub enum PowerState {
 pub enum Command {
     Power(PowerState),
 }
-
-
-

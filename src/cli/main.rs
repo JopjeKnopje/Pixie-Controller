@@ -1,4 +1,3 @@
-
 use std::io::{BufRead, Write};
 
 use psu_toggle::{Command, PowerState::Toggle, SOCKET_NAME};

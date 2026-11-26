@@ -1,13 +1,36 @@
+use anyhow::Error;
+use interprocess::local_socket::Stream;
 use psu_toggle::{Command, SOCKET_NAME};
-use serialport::new;
+
+use {
+    interprocess::local_socket::{GenericNamespaced, ListenerOptions, prelude::*},
+    std::io::{self, BufReader, Read, prelude::*},
+};
+
+const BUFFER_SIZE: usize = 8;
+
+// TODO: clean up this code, make it more "rusty"
+fn ipc_receive(conn: &mut BufReader<Stream>) -> Result<Command, Error> {
+    let mut data = Vec::<u8>::new();
+    loop {
+        let mut buffer: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
+
+        let n = conn.read(&mut buffer)?;
+        if n > 0 {
+            for b in buffer {
+                if b > 0 {
+                    data.push(b);
+                }
+            }
+        }
+        if n < BUFFER_SIZE {
+            break;
+        }
+    }
+    Ok(serde_cbor::from_slice::<Command>(data.as_slice())?)
+}
 
 fn main() -> std::io::Result<()> {
-    //}
-    use {
-        interprocess::local_socket::{GenericNamespaced, ListenerOptions, prelude::*},
-        std::io::{self, BufReader, prelude::*},
-    };
-
     let name = SOCKET_NAME.to_ns_name::<GenericNamespaced>()?;
 
     let listener = match ListenerOptions::new().name(name).create_sync() {
@@ -22,11 +45,7 @@ fn main() -> std::io::Result<()> {
         x => x?,
     };
 
-    // This is a good place to inform clients that the server is ready.
     eprintln!("Server running at {SOCKET_NAME}");
-
-    // This buffer will be reused between clients.
-    const BUFFER_SIZE: usize = 8;
 
     for mut conn in listener
         .incoming()
@@ -36,48 +55,12 @@ fn main() -> std::io::Result<()> {
         })
         .map(BufReader::new)
     {
-        // Since our client example sends first, the server should receive a
-        // line and only then send a response. Otherwise, because receiving
-        // from and sending to a connection cannot be simultaneous without
-        // threads or async, we can deadlock the two processes by having both
-        // sides wait for the send buffer to be emptied by the other.
-        let mut data = Vec::<u8>::new();
-        loop {
-            let mut buffer: [u8; BUFFER_SIZE] = [0; BUFFER_SIZE];
+        let cmd = ipc_receive(&mut conn).unwrap();
+        println!("received command {:?}", cmd);
 
-            let n = conn.read(&mut buffer)?;
-            if n > 0 {
-                for b in buffer {
-                    if b > 0 {
-                    data.push(b);
-                    }
-                }
-            }
-            dbg!("received {:?}", &data);
-
-            if n < BUFFER_SIZE {
-                break;
-            }
-        }
-
-        let cmd_new = serde_cbor::from_slice::<Command>(data.as_slice()).unwrap();
-        println!("de-serialized data {:?}", cmd_new);
-
-        // Now that the receive has come through and the client is waiting
-        // on the server's send, do it. (`.get_mut()` is to get the sender,
-        // `BufReader` doesn't implement a pass-through `Write`.)
         conn.get_mut().write_all(b"Hello from server!\n")?;
-
         // Avoid holding up resources.
         drop(conn);
-
-        // read_line keeps the line feed at the end.
-        print!("Client answered: {data:?}");
-
-        // Clear the buffer so that the next iteration will display new data
-        // instead of messages stacking on top of one another.
-        // buffer.clear();
     }
-    //{
     Ok(())
-} //}
+}
