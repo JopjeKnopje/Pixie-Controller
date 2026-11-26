@@ -1,4 +1,4 @@
-use psu_toggle::SOCKET_NAME;
+use psu_toggle::{Command, SOCKET_NAME};
 use serialport::new;
 
 fn main() -> std::io::Result<()> {
@@ -59,6 +59,10 @@ fn main() -> std::io::Result<()> {
                 break;
             }
         }
+
+        let cmd_new = serde_cbor::from_slice::<Command>(data.as_slice()).unwrap();
+        println!("de-serialized data {:?}", cmd_new);
+
         // Now that the receive has come through and the client is waiting
         // on the server's send, do it. (`.get_mut()` is to get the sender,
         // `BufReader` doesn't implement a pass-through `Write`.)
