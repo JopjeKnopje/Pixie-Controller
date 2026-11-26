@@ -1,66 +1,36 @@
-// #![deny(warnings)]
-use anyhow::Context;
-use ka3005p::{Command, Ka3005p, Switch};
-use std::convert::TryInto;
-use std::process::exit;
-use clap::Parser;
-
-
-#[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-struct Args {
-    cmd: String,
-}
-
-fn status(state: Switch) {
-
-    let s = match state {
-        Switch::On => "\u{f111}",
-        Switch::Off => "\u{f10c}",
+//{
+fn main() -> std::io::Result<()> {
+    //}
+    use {
+        interprocess::local_socket::{prelude::*, GenericFilePath, GenericNamespaced, Stream},
+        std::io::{prelude::*, BufReader},
     };
-    println!("{}", s);
 
-}
+    let name = if GenericNamespaced::is_supported() {
+        "example.sock".to_ns_name::<GenericNamespaced>()?
+    } else {
+        "/tmp/example.sock".to_fs_name::<GenericFilePath>()?
+    };
 
-fn output_set(mut serial: Ka3005p, state: Switch) ->  ::anyhow::Result<(), anyhow::Error> {
-    let cmd = Command::Power(state);
+    let mut buffer = String::with_capacity(128);
 
-    serial.execute(
-        cmd.try_into()
-            .with_context(|| "unsupported command conversion")?,
-    )?;
+    // Will fail immediately if the server hasn't started yet.
+    let mut conn = BufReader::new(Stream::connect(name)?);
+
+    // BufReader doesn't pass Write through, so we use get_mut.
+    conn.get_mut().write_all(b"Hello from client!\n")?;
+
+    // We now employ the buffer we allocated prior and receive a single line,
+    // interpreting a newline character as an end-of-file (because local
+    // sockets cannot be portably shut down), verifying validity of UTF-8 on
+    // the fly.
+    conn.read_line(&mut buffer)?;
+
+    // Avoid holding up resources.
+    drop(conn);
+
+    // read_line keeps the line feed at the end.
+    print!("Server answered: {buffer}");
+    //{
     Ok(())
-}
-
-fn toggle(serial: Ka3005p, state: Switch) -> ::anyhow::Result<(), anyhow::Error> {
-    let state = match state {
-        Switch::On => Switch::Off,
-        Switch::Off => Switch::On,
-    };
-    return output_set(serial, state)
-}
-
-fn main() -> ::anyhow::Result<(), anyhow::Error> {
-    human_panic::setup_panic!();
-    env_logger::init();
-
-    // real faken dirty
-    let cmd = Args::parse().cmd;
-
-    let mut serial = ka3005p::find_serial_port()?;
-
-    let state = serial.status()?.flags.output;
-
-
-
-    match cmd.as_str() {
-        "status" => status(state),
-        "toggle" => toggle(serial, state)?,
-        "on" => output_set(serial, Switch::On)?,
-        "off" => output_set(serial, Switch::Off)?,
-        _ => exit(1)
-        
-    }
-    exit(0);
-}
-
+} //}
