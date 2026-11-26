@@ -1,12 +1,16 @@
-use std::io::{BufRead, Write};
+use std::{
+    env,
+    io::{BufRead, Write},
+};
 
-use psu_toggle::{Command, PowerState::Toggle, SOCKET_NAME};
+use psu_toggle::{CustomCommand, SOCKET_NAME};
 use {
     interprocess::local_socket::{GenericNamespaced, Stream, prelude::*},
     std::io::BufReader,
 };
 
 fn main() -> std::io::Result<()> {
+    human_panic::setup_panic!();
     let name = SOCKET_NAME.to_ns_name::<GenericNamespaced>()?;
 
     // Will fail immediately if the server hasn't started yet.
@@ -16,7 +20,7 @@ fn main() -> std::io::Result<()> {
     // 2. serialize and send enum through socket.
     // 3. print reply which will be a `ka3005p::Status` and parse that out
 
-    let cmd = Command::Power(Toggle);
+    let cmd = CustomCommand::PowerToggle;
     let data = serde_cbor::to_vec(&cmd).unwrap();
 
     dbg!("writing data {:?}", &data);
@@ -47,12 +51,12 @@ mod tests {
     use super::*;
 
     #[test]
-    fn print_data() {
-        let cmd = Command::Power(Toggle);
+    fn basic_serialization() {
+        let cmd = CustomCommand::PowerToggle;
         let data = serde_cbor::to_vec(&cmd).unwrap();
         println!("serialized data {:?}", data);
 
-        let cmd_new = serde_cbor::from_slice::<Command>(data.as_slice()).unwrap();
+        let cmd_new = serde_cbor::from_slice::<CustomCommand>(data.as_slice()).unwrap();
         println!("de-serialized data {:?}", cmd_new);
     }
 }

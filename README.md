@@ -33,6 +33,7 @@ yea thats about it actually.
 
 - [ ] Build system multiple bins, `psu-service`, `psu-cli`
 - [ ] Figure out IPC
+- [ ] Support PSU power cycling.
 
 ### psu-cli
 
