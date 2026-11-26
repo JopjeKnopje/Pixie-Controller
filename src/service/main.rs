@@ -1,4 +1,6 @@
-//{
+use psu_toggle::SOCKET_NAME;
+
+
 fn main() -> std::io::Result<()> {
     //}
     use {
@@ -6,25 +8,13 @@ fn main() -> std::io::Result<()> {
         std::io::{self, prelude::*, BufReader},
     };
 
-    let printname = "example.sock";
-    let name = printname.to_ns_name::<GenericNamespaced>()?;
+    let name = SOCKET_NAME.to_ns_name::<GenericNamespaced>()?;
 
     let listener = match ListenerOptions::new().name(name).create_sync() {
         Err(e) if e.kind() == io::ErrorKind::AddrInUse => {
-            // When a program that uses a file-type socket name terminates
-            // its socket server without deleting the file, a "corpse socket"
-            // remains, which can neither be connected to nor reused by a new
-            // listener. Normally, Interprocess takes care of this on affected
-            // platforms by deleting the socket file when the listener is
-            // dropped. (This is vulnerable to all sorts of races and thus can
-            // be disabled.)
-            //
-            // In a real program, instead of leaving it up to the user
-            // to perform cleanup, one would use the .try_overwrite(true)
-            // listener option to try to replace the socket.
             eprintln!(
                 "Error: could not start server because the socket file is \
-                occupied. Please check if {printname} is in use by another \
+                occupied. Please check if {SOCKET_NAME} is in use by another \
                 process and try again."
             );
             return Err(e);
@@ -33,7 +23,7 @@ fn main() -> std::io::Result<()> {
     };
 
     // This is a good place to inform clients that the server is ready.
-    eprintln!("Server running at {printname}");
+    eprintln!("Server running at {SOCKET_NAME}");
 
     // This buffer will be reused between clients.
     let mut buffer = String::with_capacity(128);

@@ -1,17 +1,15 @@
-//{
+
+use std::io::{BufRead, Write};
+
+use psu_toggle::{Command, PowerState::Toggle, SOCKET_NAME};
+use serde::Serialize;
+use {
+    interprocess::local_socket::{GenericNamespaced, Stream, prelude::*},
+    std::io::BufReader,
+};
+
 fn main() -> std::io::Result<()> {
-    //}
-    use {
-        interprocess::local_socket::{prelude::*, GenericFilePath, GenericNamespaced, Stream},
-        std::io::{prelude::*, BufReader},
-    };
-
-    let name = if GenericNamespaced::is_supported() {
-        "example.sock".to_ns_name::<GenericNamespaced>()?
-    } else {
-        "/tmp/example.sock".to_fs_name::<GenericFilePath>()?
-    };
-
+    let name = SOCKET_NAME.to_ns_name::<GenericNamespaced>()?;
     let mut buffer = String::with_capacity(128);
 
     // Will fail immediately if the server hasn't started yet.
@@ -33,4 +31,19 @@ fn main() -> std::io::Result<()> {
     print!("Server answered: {buffer}");
     //{
     Ok(())
-} //}
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn print_data() {
+        let cmd = Command::Power(Toggle);
+        let data = serde_cbor::to_vec(&cmd).unwrap();
+        println!("serialized data {:?}", data);
+
+        let cmd_new = serde_cbor::from_slice::<Command>(data.as_slice()).unwrap();
+        println!("de-serialized data {:?}", cmd_new);
+    }
+}
