@@ -31,9 +31,13 @@ yea thats about it actually.
 
 ## TODO
 
-- [ ] Build system multiple bins, `psu-service`, `psu-cli`
-- [ ] Figure out IPC
-- [ ] Support PSU power cycling.
+- [x] Build system for multiple bins
+- [ ] Rename bins to: `psu-service`, `psu-cli`.
+- [x] Send IPC commands to server.
+- [ ] Remove ambiguity around the type of socket we're using, enfore the UNIX specific one.
+- [ ] Support output status
+- [ ] Wrap default commands?
+- [ ] Keep listening for new connection when PSU power cycles.
 
 ### psu-cli
 
