@@ -32,11 +32,11 @@ A standalone background service to send commands to using a cli. it will also ke
 yea thats about it actually.
 
 ## TODO
-- [ ] Build system multiple bins, `psu-controller`, `psu-cli`
+- [ ] Build system multiple bins, `psu-service`, `psu-cli`
 - [ ] Figure out IPC
 
 ### psu-cli
-This will take in the exact same commands as the [ka3005p](https://docs.rs/ka3005p/latest/ka3005p/) crate. But instead of calling the serial port we wrap that and call the `psu-controller` through IPC.
+This will take in the exact same commands as the [ka3005p](https://docs.rs/ka3005p/latest/ka3005p/) crate. But instead of calling the serial port we wrap that and call the `psu-service` through IPC.
 
-### psu-controller
+### psu-service
 A daemon which listens for IPC, and runs the actual command through the serial port. Then passes the result back through IPC.

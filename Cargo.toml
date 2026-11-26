@@ -3,6 +3,14 @@ name = "psu-toggle"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "cli"
+path = "src/cli/main.rs"
+
+[[bin]]
+name = "service"
+path = "src/service/main.rs"
+
 [dependencies]
 anyhow = "1.0.105"
 clap = "4.6.9"
