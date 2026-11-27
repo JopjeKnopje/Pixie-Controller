@@ -4,8 +4,6 @@
 *✨ Control your korad power supply through a taskbar widget ✨*
 </div>
 
----
-
 
 
 ## About the Project
