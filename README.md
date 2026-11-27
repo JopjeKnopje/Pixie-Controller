@@ -1,6 +1,16 @@
-# Pixie Controller
+<div align="center">
 
-Software to [control](https://github.com/Nicoretti/ka3005p) a [Korad](https://www.eleshop.nl/korad-ka3005d-power-supply.html) Power supply, running as a systemd service to keep the serial connection alive. It listens to [IPC](https://docs.rs/interprocess/latest/interprocess/) calls for commands from the `pixie-cli`.
+# Pixie Controller
+*✨ Control your korad power supply through a taskbar widget ✨*
+</div>
+
+---
+
+
+
+## About the Project
+Computer controls for a [ka3005d](https://www.eleshop.nl/korad-ka3005d-power-supply.html) power supply, with a systemd background service to keep the serial connection alive. It listens to [IPC](https://docs.rs/interprocess/latest/interprocess/) calls for commands from the `pixie-cli`.
+
 
 My power supply is sitting slightly too far away from my lazy ass. So I wanted to have a widget in my [i3status-rs](https://github.com/greshake/i3status-rust) bar to toggle the output.
 While I was writing this project I realized having a seperate service also opens up the possiblity for some cool embedded integration-tests.
@@ -22,6 +32,8 @@ cmd = "~/.local/bin/pixie-cli toggle"
 
 The bar only refreshes every 1 sec, and I haven't found a way to make it faster :(
 
+## Toolchain
+prek, just, cargo (duhh), text-editor, keyboard, 0.5L mate, monitor (I use a 12 inch 4:3, but you could go smaller), [lungs](https://en.wikipedia.org/wiki/Lung) (gotta keep breathing)
 ## Installation
 
 Currently there is no installer script or anything like that, so here I'll list the manual steps to get it up and running.
@@ -49,10 +61,6 @@ systemctl --user status pixie-controller
 # tail the logs
 journalctl --user -u pixie-controller -f
 ```
-
-## Toolchain
-
-- prek, just, cargo (duhh), text-editor, keyboard, 0.5L mate, monitor (I use a 12 inch 4:3, but you could go smaller), [lungs](https://en.wikipedia.org/wiki/Lung) (gotta keep breathing)
 
 ## TODO
 
