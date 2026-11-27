@@ -1,10 +1,10 @@
 [Unit]
 Description=Daemon for talking to the serial port of a korad ka3005d power supply
 [Service]
-Type=simple
+Type=exec
 # path to install location of service
-ExecStart=/usr/bin/bash %h/.local/bin/psu-service
+ExecStart=%h/.local/bin/psu-service
 Restart=on-failure
 
 [Install]
-WantedBy=default.target
+WantedBy=multi-user.target
