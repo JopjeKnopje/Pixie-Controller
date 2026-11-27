@@ -10,8 +10,8 @@
 Computer controls for a [ka3005d](https://www.eleshop.nl/korad-ka3005d-power-supply.html) power supply, with a systemd background service to keep the serial connection alive. It listens to [IPC](https://docs.rs/interprocess/latest/interprocess/) calls for commands from the `pixie-cli`.
 
 
-My power supply is sitting slightly too far away from my lazy ass. So I wanted to have a widget in my [i3status-rs](https://github.com/greshake/i3status-rust) bar to toggle the output.
-While I was writing this project I realized having a seperate service also opens up the possiblity for some cool embedded integration-tests.
+My power supply is sitting slightly too far away from my lazy ass. Instead of getting up I made a widget for in my [i3status-rs](https://github.com/greshake/i3status-rust) bar to toggle the output.
+While I was writing this project I realized having a separate service also opens up the possibility for some cool embedded integration-tests.
 
 > [!CAUTION]
 > This repo contains the worst rust code you will ever read, I cobbled this together in one evening, but will def improve on it.
