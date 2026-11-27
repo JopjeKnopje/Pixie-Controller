@@ -33,7 +33,6 @@ The bar only refreshes every 1 sec, and I haven't found a way to make it faster 
 ## Toolchain
 prek, just, cargo (duhh), text-editor, keyboard, 0.5L mate, monitor (I use a 12 inch 4:3, but you could go smaller), [lungs](https://en.wikipedia.org/wiki/Lung) (gotta keep breathing)
 ## Installation
-
 Currently there is no installer script or anything like that, so here I'll list the manual steps to get it up and running.
 
 Files in the right place.
