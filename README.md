@@ -14,11 +14,11 @@ I still need to properly read the docx to make the icon update on every click in
 ```toml
 [[block]]
 block = "custom"
-command = "~/.local/bin/psu-toggle status"
+command = "~/.local/bin/psu-cli status"
 interval = 1
 [[block.click]]
 button = "left"
-cmd = "~/.local/bin/psu-toggle toggle"
+cmd = "~/.local/bin/psu-cli toggle"
 ```
 
 ## Upgrades
@@ -28,6 +28,31 @@ Because this version is absolte ass here are some improvements.
 A standalone background service to send commands to using a cli. it will also keep the serial connection alive, which should make it respond wayyyy faster than it is now.
 
 yea thats about it actually.
+
+## Installation
+
+Currently there is no installer script or anything like that, so here I'll list the manual steps to get it up and running.
+
+```bash
+# this will copy the binaries into your ~/.local/bin.
+just install
+# create a local ~/.local/share/systemd/user/ and copy the service into it.
+just service
+```
+
+Systemd commands
+
+```bash
+# enable the service
+systemctl --user enable psu-service
+# start it
+systemctl --user start psu-service
+
+# check status
+systemctl --user status psu-service
+# tail the logs
+journalctl --user -u psu-service -f
+```
 
 ## Toolchain
 
