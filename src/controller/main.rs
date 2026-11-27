@@ -1,7 +1,8 @@
 use anyhow::{Error, Result};
 use interprocess::local_socket::Stream;
 use ka3005p::Ka3005p;
-use psu_toggle::{CustomCommand, SOCKET_NAME};
+
+use pixie_controller::{CustomCommand, SOCKET_NAME};
 
 use {
     interprocess::local_socket::{GenericNamespaced, ListenerOptions, prelude::*},

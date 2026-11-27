@@ -1,14 +1,14 @@
 install:
-	cp target/release/service ~/.local/bin/psu-service -fv
-	cp target/release/cli ~/.local/bin/psu-cli -fv
-	chmod +x ~/.local/bin/psu-service
-	chmod +x ~/.local/bin/psu-cli
+	cp target/release/service ~/.local/bin/pixie-controller -fv
+	cp target/release/cli ~/.local/bin/pixie-cli -fv
+	chmod +x ~/.local/bin/pixie-controller
+	chmod +x ~/.local/bin/pixie
 
 service:
 	mkdir -p ~/.local/share/systemd/user/
-	cp systemd/psu-service.service ~/.local/share/systemd/user/
+	cp systemd/psu-controller.service ~/.local/share/systemd/user/
 	systemctl --user daemon-reload
 
 
 monitor:
-	journalctl --user -u psu-service -f
+	journalctl --user -u pixie-controller -f

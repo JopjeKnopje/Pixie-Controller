@@ -1,37 +1,32 @@
-# psu-toggle
+# Pixie Controller
 
-Small script based on the [ka3005p](https://github.com/Nicoretti/ka3005p) crate, to toggle a compatible PSU.
-I mainly made this so I can have a widget in my [i3status-rs](https://github.com/greshake/i3status-rust) bar.
+Software to [control](https://github.com/Nicoretti/ka3005p) a [Korad](https://www.eleshop.nl/korad-ka3005d-power-supply.html) Power supply, running as a systemd service to keep the serial connection alive. It listens to [IPC](https://docs.rs/interprocess/latest/interprocess/) calls for commands from the `pixie-cli`.
 
-## State
+My power supply is sitting slightly too far away from my lazy ass. So I wanted to have a widget in my [i3status-rs](https://github.com/greshake/i3status-rust) bar to toggle the output.
+While I was writing this project I realized having a seperate service also opens up the possiblity for some cool embedded integration-tests.
 
-Atm its very hacky and takes a second to refresh.
-There is also a bug where sometimes the serial port is busy, this may occur after you've just changed state.
-I still need to properly read the docx to make the icon update on every click instantly.
+> [!CAUTION]
+> This repo contains the worst rust code you will ever read, I cobbled this together in one evening, but will def improve on it.
 
 ## i3status-rs config snippet
 
 ```toml
 [[block]]
 block = "custom"
-command = "~/.local/bin/psu-cli status"
+command = "~/.local/bin/pixie-cli status"
 interval = 1
 [[block.click]]
 button = "left"
-cmd = "~/.local/bin/psu-cli toggle"
+cmd = "~/.local/bin/pixie-cli toggle"
 ```
 
-## Upgrades
-
-Because this version is absolte ass here are some improvements.
-
-A standalone background service to send commands to using a cli. it will also keep the serial connection alive, which should make it respond wayyyy faster than it is now.
-
-yea thats about it actually.
+The bar only refreshes every 1 sec, and I haven't found a way to make it faster :(
 
 ## Installation
 
 Currently there is no installer script or anything like that, so here I'll list the manual steps to get it up and running.
+
+Files in the right place.
 
 ```bash
 # this will copy the binaries into your ~/.local/bin.
@@ -40,44 +35,45 @@ just install
 just service
 ```
 
-Systemd commands
+Systemd commands.
 
 ```bash
 # enable the service
-systemctl --user enable psu-service
+systemctl --user enable pixie-controller
 # start it
-systemctl --user start psu-service
+systemctl --user start pixie-controller
+
 
 # check status
-systemctl --user status psu-service
+systemctl --user status pixie-controller
 # tail the logs
-journalctl --user -u psu-service -f
+journalctl --user -u pixie-controller -f
 ```
 
 ## Toolchain
 
-- prek, just, cargo (duhh), text-editor, keyboard, monitor (I use a 12 inch 4:3, but you could go smaller), [lungs](https://en.wikipedia.org/wiki/Lung) (gotta keep breathing)
+- prek, just, cargo (duhh), text-editor, keyboard, 0.5L mate, monitor (I use a 12 inch 4:3, but you could go smaller), [lungs](https://en.wikipedia.org/wiki/Lung) (gotta keep breathing)
 
 ## TODO
 
 - [x] Build system for multiple bins
-- [ ] Rename bins to: `psu-service`, `psu-cli`.
+- [ ] Rename bins to: `pixie-controller`, `pixie-cli`.
 - [x] Send IPC commands to server.
 - [ ] Remove ambiguity around the type of socket we're using, enfore the UNIX specific one.
 - [ ] Support output status
 - [ ] Handle the interpretation of the output from the psu (the emoji for example) on the `cli` side.
 - [ ] Wrap default commands?
-- [ ] `psu-cli` error when `psu-service` is not online.
+- [ ] `pixie-cli` error when `pixie-controller` is not online.
 - [ ] Keep listening for new connection when PSU power cycles.
-- [ ] Improve logging especially in the `psu-service`.
-- [ ] in `psu-cli` print to stdout.
+- [ ] Improve logging especially in the `pixie-controller`.
+- [ ] in `pixie-cli` print to stdout.
 - [ ] Improve code A LOT and release to AUR.
 - [ ] Config file?
 
-### psu-cli
+### pixie-cli
 
-This will take in the exact same commands as the [ka3005p](https://docs.rs/ka3005p/latest/ka3005p/) crate. But instead of calling the serial port we wrap that and call the `psu-service` through IPC.
+This will take in the exact same commands as the [ka3005p](https://docs.rs/ka3005p/latest/ka3005p/) crate. But instead of calling the serial port we wrap that and call the `pixie-controller` through IPC.
 
-### psu-service
+### pixie-controller
 
 A daemon which listens for IPC, and runs the actual command through the serial port. Then passes the result back through IPC.

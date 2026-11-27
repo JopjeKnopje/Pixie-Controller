@@ -1,5 +1,5 @@
 [package]
-name = "psu-toggle"
+name = "pixie-controller"
 version = "0.1.0"
 edition = "2024"
 
@@ -8,8 +8,8 @@ name = "cli"
 path = "src/cli/main.rs"
 
 [[bin]]
-name = "service"
-path = "src/service/main.rs"
+name = "controller"
+path = "src/controller/main.rs"
 
 [dependencies]
 anyhow = "1.0.105"

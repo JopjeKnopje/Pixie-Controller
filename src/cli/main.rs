@@ -3,7 +3,8 @@ use std::{
     io::{BufRead, Write},
 };
 
-use psu_toggle::{CustomCommand, SOCKET_NAME};
+use pixie_controller::{CustomCommand, SOCKET_NAME};
+
 use {
     interprocess::local_socket::{GenericNamespaced, Stream, prelude::*},
     std::io::BufReader,

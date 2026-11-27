@@ -3,7 +3,7 @@ Description=Daemon for talking to the serial port of a korad ka3005d power suppl
 [Service]
 Type=exec
 # path to install location of service
-ExecStart=%h/.local/bin/psu-service
+ExecStart=%h/.local/bin/pixie-controller
 Restart=on-failure
 
 [Install]
